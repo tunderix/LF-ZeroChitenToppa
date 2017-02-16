@@ -3,11 +3,26 @@
     "command": "dotnet",
     "isShellCommand": true,
     "args": [],
-    "tasks": [
-        {
+    "tasks": [{
             "taskName": "build",
             "args": [
                 "${workspaceRoot}/ZeroServer/ZeroPointBreakthrough/ZeroPointBreakthrough.csproj"
+            ],
+            "isBuildCommand": true,
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "taskName": "buildBT",
+            "args": [
+                "${workspaceRoot}/ZeroWeb/ZeroPointBT/ZeroPointBT.csproj"
+            ],
+            "isBuildCommand": true,
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "taskName": "buildNative",
+            "args": [
+                "${workspaceRoot}/ZeroNative/ZPBNative/ZPBNative.csproj"
             ],
             "isBuildCommand": true,
             "problemMatcher": "$msCompile"

@@ -12,14 +12,37 @@ class ZeroPointBreakthrough
         var server = new UdpListener();
         string host = "127.0.0.1";
         int portToConnect = 32123;
+        initGameState();
+
         //start listening for messages and copy the messages back to the client
         Task.Factory.StartNew(async () => {
             while (true)
             {
                 var received = await server.Receive();
-                server.Reply("copy " + received.Message, received.Sender);
+                Console.WriteLine("Got UDP Packet from :" + received.Sender.ToString());
+                Console.WriteLine("---------------------------------------");
+                bool isCommand = false;
+                
+                if (received.Message.Contains("setPlayers")){
+                    GameController.Instance.setPlayers(2);
+                    server.Reply("Players have been set!", received.Sender);
+                    isCommand = true;
+                }
+                if (received.Message.Contains("getState")){
+                    GameState curState = GameController.Instance.getState();
+                    string message = curState.getMap();
+                    message = ":" + message + ":" + curState.getPlayerCount() + ":";
+                    server.Reply("State-" + message, received.Sender);
+                    isCommand = true;
+                }
+                    
                 if (received.Message == "quit")
+                    isCommand = true;
                     break;
+                
+                if (!isCommand){
+                    server.Reply("Did not identify your command! Your command was:" + received.Message, received.Sender);
+                }
             }
         });
 
@@ -53,6 +76,12 @@ class ZeroPointBreakthrough
         } while (read != "quit");
     }
     
+    private static void initGameState(){
+        GameController.Instance.initState();
+                Console.WriteLine("---------------------------------------");
+                Console.WriteLine("---------GameStateInitialized----------");
+                Console.WriteLine("---------------------------------------");
+    }
 }
 
 public struct Received
@@ -111,8 +140,10 @@ class UdpUser : UdpBase
 
     public static UdpUser ConnectTo(string hostname, int port)
     {
+        SocketAsyncEventArgs e = new SocketAsyncEventArgs();
+        e.RemoteEndPoint = new IPEndPoint(IPAddress.Parse(hostname), port);
         var connection = new UdpUser();
-        connection.Client.Client.Connect(hostname, port);
+        connection.Client.Client.ConnectAsync(e);//    Connect(hostname, port);
         return connection;
     }
 
