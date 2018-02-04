@@ -5,7 +5,7 @@ public class GameController
     private GameState state;
     private static GameController instance;
 
-    private GameController() {}
+    public GameController() {}
 
     public static GameController Instance
     {

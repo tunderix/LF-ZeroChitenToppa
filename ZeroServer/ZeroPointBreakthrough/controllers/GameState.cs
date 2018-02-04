@@ -25,7 +25,7 @@ public class GameState
         }
         return returnable;
     }
-    public string getPlayerCount(){
-        return players.ToString();
+    public int getPlayerCount(){
+        return players;
     }
 }
